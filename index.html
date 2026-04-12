@@ -44,13 +44,20 @@
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; font-size: 16px; -webkit-tap-highlight-color: transparent; }
+    html { scroll-behavior: smooth; font-size: 16px; -webkit-tap-highlight-color: transparent; scroll-padding-top: 80px; }
     body {
       font-family: var(--ff-body);
       background: var(--clr-bg);
       color: var(--clr-dark);
       -webkit-font-smoothing: antialiased;
       overflow-x: hidden;
+      transition: background-color .3s ease;
+    }
+    a, button, input, select, textarea {
+      transition: all .2s ease;
+    }
+    a:hover {
+      transition: color .15s ease;
     }
     img { display: block; width: 100%; height: 100%; object-fit: cover; }
     a  { text-decoration: none; color: inherit; }
@@ -179,22 +186,268 @@
     .nav-links a:hover { color: var(--clr-accent); }
     .nav-links .btn { padding: 10px 20px; font-size: .85rem; }
 
-    .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 4px; background: none; border: none; }
-    .hamburger span { width: 24px; height: 2px; background: var(--clr-dark); border-radius: 2px; transition: var(--transition); display: block; }
+    /* Modern Hamburger Menu */
+    .hamburger { 
+      display: none; 
+      flex-direction: column; 
+      justify-content: center;
+      align-items: center;
+      gap: 6px; 
+      cursor: pointer; 
+      width: 44px; 
+      height: 44px; 
+      border-radius: 12px;
+      background: var(--clr-surface);
+      border: none;
+      box-shadow: 0 2px 8px rgba(0,0,0,.08);
+      position: relative;
+      z-index: 1001;
+    }
+    .hamburger span { 
+      width: 22px; 
+      height: 2px; 
+      background: var(--clr-dark); 
+      border-radius: 2px;
+      transition: all .3s ease;
+      position: absolute;
+    }
+    .hamburger span:nth-child(1) { top: 16px; }
+    .hamburger span:nth-child(2) { top: 22px; }
+    .hamburger span:nth-child(3) { top: 28px; }
+    .hamburger.active span:nth-child(1) { 
+      top: 22px;
+      transform: rotate(45deg); 
+    }
+    .hamburger.active span:nth-child(2) { opacity: 0; }
+    .hamburger.active span:nth-child(3) { 
+      top: 22px;
+      transform: rotate(-45deg); 
+    }
 
+    /* Modern Card-Based Menu */
     .mobile-nav {
       display: none;
       position: fixed;
       inset: 0;
-      background: var(--clr-bg);
-      z-index: 999;
-      padding: 100px 40px 40px;
+      background: linear-gradient(180deg, var(--clr-bg) 0%, #f5f1eb 100%);
+      z-index: 1000;
+      padding: 0;
       flex-direction: column;
-      gap: 24px;
+      justify-content: flex-start;
+      padding-top: 80px;
+      overflow-y: auto;
+      opacity: 0;
+      visibility: hidden;
+      transition: all .4s ease;
     }
-    .mobile-nav.open { display: flex; }
-    .mobile-nav a { font-family: var(--ff-body); font-size: 1.7rem; font-weight: 700; color: var(--clr-dark); border-bottom: 1px solid var(--clr-border); padding-bottom: 16px; }
-    .mobile-nav .btn { font-size: .95rem; justify-content: center; }
+    .mobile-nav.open { 
+      opacity: 1;
+      visibility: visible;
+    }
+    
+    /* Menu Header - Floating Card */
+    .mobile-nav-header {
+      padding: 0 20px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .mobile-nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .mobile-nav-logo .logo-mark {
+      width: 48px;
+      height: 48px;
+      background: var(--clr-accent);
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--ff-body);
+      font-size: 1.3rem;
+      font-weight: 800;
+      color: #fff;
+      box-shadow: 0 4px 16px rgba(224,123,42,.35);
+    }
+    .mobile-nav-logo .logo-text {
+      font-family: var(--ff-body);
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--clr-dark);
+    }
+    
+    .mobile-nav-close {
+      width: 48px;
+      height: 48px;
+      background: var(--clr-surface);
+      border: 1px solid var(--clr-border);
+      border-radius: 14px;
+      font-size: 1.3rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--clr-dark);
+      transition: all .25s ease;
+    }
+    .mobile-nav-close:hover {
+      background: var(--clr-accent);
+      color: #fff;
+      border-color: var(--clr-accent);
+    }
+    
+    /* Menu Content */
+    .menu-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 0 20px;
+      gap: 12px;
+    }
+    
+    /* Menu Links - Card Style */
+    .mobile-nav-links {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .mobile-nav a.menu-link {
+      font-family: var(--ff-body);
+      font-size: 1.35rem;
+      font-weight: 600;
+      color: var(--clr-dark);
+      padding: 18px 24px;
+      background: var(--clr-surface);
+      border-radius: 16px;
+      border: 1px solid var(--clr-border);
+      position: relative;
+      transition: all .3s cubic-bezier(.4,0,.2,1);
+      opacity: 0;
+      transform: translateX(-20px);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .mobile-nav.open a.menu-link {
+      animation: cardSlide .4s ease forwards;
+    }
+    .mobile-nav.open a.menu-link:nth-child(1) { animation-delay: .08s; }
+    .mobile-nav.open a.menu-link:nth-child(2) { animation-delay: .12s; }
+    .mobile-nav.open a.menu-link:nth-child(3) { animation-delay: .16s; }
+    .mobile-nav.open a.menu-link:nth-child(4) { animation-delay: .2s; }
+    .mobile-nav.open a.menu-link:nth-child(5) { animation-delay: .24s; }
+    .mobile-nav.open a.menu-link:nth-child(6) { animation-delay: .28s; }
+    @keyframes cardSlide {
+      to { opacity: 1; transform: translateX(0); }
+    }
+    .menu-link-icon {
+      width: 36px;
+      height: 36px;
+      background: rgba(224,123,42,.1);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--clr-accent);
+      font-size: 1rem;
+    }
+    .menu-link-arrow {
+      color: var(--clr-muted);
+      font-size: 0.9rem;
+      transition: transform .3s ease;
+    }
+    .menu-link:hover .menu-link-arrow {
+      transform: translateX(4px);
+      color: var(--clr-accent);
+    }
+    .mobile-nav a:hover, .mobile-nav a.active { 
+      background: #fff;
+      border-color: var(--clr-accent);
+      box-shadow: 0 4px 16px rgba(224,123,42,.12);
+    }
+    
+    /* Menu CTA Buttons */
+    .mobile-nav-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 16px;
+      opacity: 0;
+    }
+    .mobile-nav.open .mobile-nav-buttons {
+      animation: fadeIn .4s ease forwards;
+      animation-delay: .35s;
+    }
+    .mobile-nav .btn { 
+      font-size: 1.05rem; 
+      justify-content: center;
+      padding: 16px 24px;
+      width: 100%;
+      border-radius: 14px;
+    }
+    
+    /* Menu Footer */
+    .mobile-nav-footer {
+      padding: 24px 20px;
+      text-align: center;
+      border-top: 1px solid var(--clr-border);
+      margin-top: 20px;
+      opacity: 0;
+    }
+    .mobile-nav.open .mobile-nav-footer {
+      animation: fadeIn .4s ease forwards;
+      animation-delay: .4s;
+    }
+    .mobile-nav-footer p {
+      font-size: .85rem;
+      color: var(--clr-muted);
+      margin-bottom: 16px;
+    }
+    .mobile-nav-contact {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+    }
+    .mobile-nav-contact a {
+      width: 48px;
+      height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 12px;
+      font-size: 1.1rem;
+      color: var(--clr-mid);
+      background: var(--clr-surface);
+      border: 1px solid var(--clr-border);
+      transition: all .25s ease;
+    }
+    .mobile-nav-contact a:hover {
+      background: var(--clr-accent);
+      color: #fff;
+      border-color: var(--clr-accent);
+      transform: translateY(-3px);
+      box-shadow: 0 6px 16px rgba(224,123,42,.25);
+    }
+    .mobile-nav-contact a::after { display: none; }
+    
+    @keyframes fadeIn {
+      to { opacity: 1; }
+    }
+    .mobile-nav-close {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      width: 40px;
+      height: 40px;
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      border-radius: 8px;
+    }
+    .mobile-nav-close:hover { background: var(--clr-border); }
 
     @media (max-width: 768px) {
       .nav-links  { display: none; }
@@ -402,10 +655,11 @@
       transform: scaleX(0);
       transition: var(--transition);
     }
-    .service-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-md); }
+    .service-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-md); }
     .service-card:hover::after { transform: scaleX(1); }
+    .service-card:hover .service-icon { transform: scale(1.05); }
 
-    .service-icon { width: 52px; height: 52px; background: rgba(224,123,42,.1); border-radius: 12px; display: inline-flex; align-items: center; justify-content: center; font-size: 1.5rem; margin-bottom: 18px; text-align: center; }
+    .service-icon { width: 52px; height: 52px; background: rgba(224,123,42,.1); border-radius: 12px; display: inline-flex; align-items: center; justify-content: center; font-size: 1.5rem; margin-bottom: 18px; text-align: center; transition: transform .25s ease; }
     .service-icon i { display: inline-flex; align-items: center; justify-content: center; }
     .service-name { font-family: var(--ff-body); font-size: 1.12rem; font-weight: 700; margin-bottom: 8px; }
     .service-desc { font-size: .87rem; color: var(--clr-muted); line-height: 1.65; }
@@ -967,12 +1221,48 @@
       border-radius: 12px;
     }
 
+    /* Back to Top Button */
+    .back-to-top {
+      position: fixed;
+      bottom: 100px;
+      right: 24px;
+      width: 48px;
+      height: 48px;
+      background: var(--clr-accent);
+      color: #fff;
+      border: none;
+      border-radius: 50%;
+      font-size: 1.1rem;
+      cursor: pointer;
+      box-shadow: 0 4px 16px rgba(224,123,42,.35);
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(20px);
+      transition: all .3s ease;
+      z-index: 997;
+    }
+    .back-to-top.visible {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+    .back-to-top:active {
+      transform: scale(.9);
+    }
+
+    @media (max-width: 768px) {
+      .back-to-top { bottom: 85px; right: 18px; width: 44px; height: 44px; font-size: 1rem; }
+    }
+
     .reveal {
       opacity: 0;
-      transform: translateY(32px);
-      transition: opacity .6s ease, transform .6s cubic-bezier(.4,0,.2,1);
+      transform: translateY(28px);
+      transition: opacity .5s ease, transform .5s cubic-bezier(.25,.1,.25,1);
     }
-    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .reveal.visible { 
+      opacity: 1; 
+      transform: translateY(0); 
+    }
     .reveal-delay-1 { transition-delay: .10s; }
     .reveal-delay-2 { transition-delay: .20s; }
     .reveal-delay-3 { transition-delay: .30s; }
@@ -1589,14 +1879,58 @@
   </nav>
 
   <nav class="mobile-nav" id="mobileNav">
-    <a href="#services"      onclick="closeMobileNav()">Services</a>
-    <a href="#showcase"      onclick="closeMobileNav()">Our Work</a>
-    <a href="#before-after"  onclick="closeMobileNav()">Before & After</a>
-    <a href="#pricing"       onclick="closeMobileNav()">Pricing</a>
-    <a href="#testimonials"  onclick="closeMobileNav()">Reviews</a>
-    <a href="#lead-form"     onclick="closeMobileNav()">Free Estimate</a>
-    <a href="tel:+917797725755" class="btn btn--primary"><i class="fa-solid fa-phone"></i> Call Now</a>
-    <a href="https://wa.me/917797725755" target="_blank" class="btn btn--whatsapp"><i class="fa-brands fa-whatsapp"></i> WhatsApp Us</a>
+    <div class="mobile-nav-header">
+      <div class="mobile-nav-logo">
+        <div class="logo-mark">ND</div>
+        <div class="logo-text">ND Construction</div>
+      </div>
+      <button class="mobile-nav-close" onclick="closeMobileNav()" aria-label="Close menu">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+    
+    <div class="menu-content">
+    <div class="mobile-nav-links">
+      <a href="#services" onclick="closeMobileNav()" class="menu-link">
+        <span><span class="menu-link-icon"><i class="fa-solid fa-hammer"></i></span> Services</span>
+        <span class="menu-link-arrow"><i class="fa-solid fa-chevron-right"></i></span>
+      </a>
+      <a href="#showcase" onclick="closeMobileNav()" class="menu-link">
+        <span><span class="menu-link-icon"><i class="fa-solid fa-image"></i></span> Our Work</span>
+        <span class="menu-link-arrow"><i class="fa-solid fa-chevron-right"></i></span>
+      </a>
+      <a href="#before-after" onclick="closeMobileNav()" class="menu-link">
+        <span><span class="menu-link-icon"><i class="fa-solid fa-layer-group"></i></span> Before & After</span>
+        <span class="menu-link-arrow"><i class="fa-solid fa-chevron-right"></i></span>
+      </a>
+      <a href="#pricing" onclick="closeMobileNav()" class="menu-link">
+        <span><span class="menu-link-icon"><i class="fa-solid fa-tag"></i></span> Pricing</span>
+        <span class="menu-link-arrow"><i class="fa-solid fa-chevron-right"></i></span>
+      </a>
+      <a href="#testimonials" onclick="closeMobileNav()" class="menu-link">
+        <span><span class="menu-link-icon"><i class="fa-solid fa-star"></i></span> Reviews</span>
+        <span class="menu-link-arrow"><i class="fa-solid fa-chevron-right"></i></span>
+      </a>
+      <a href="#lead-form" onclick="closeMobileNav()" class="menu-link">
+        <span><span class="menu-link-icon"><i class="fa-solid fa-clipboard-list"></i></span> Free Estimate</span>
+        <span class="menu-link-arrow"><i class="fa-solid fa-chevron-right"></i></span>
+      </a>
+    </div>
+    </div>
+    
+    <div class="mobile-nav-buttons">
+      <a href="tel:+917797725755" class="btn btn--primary btn--lg"><i class="fa-solid fa-phone"></i> Call Now</a>
+      <a href="https://wa.me/917797725755" target="_blank" class="btn btn--whatsapp btn--lg"><i class="fa-brands fa-whatsapp"></i> WhatsApp Us</a>
+    </div>
+    
+    <div class="mobile-nav-footer">
+      <p>Serving Burdwan (Goda) & nearby areas</p>
+      <div class="mobile-nav-contact">
+        <a href="tel:+917797725755"><i class="fa-solid fa-phone"></i></a>
+        <a href="https://wa.me/917797725755"><i class="fa-brands fa-whatsapp"></i></a>
+        <a href="#contact"><i class="fa-solid fa-location-dot"></i></a>
+      </div>
+    </div>
   </nav>
 
   <section id="hero">
@@ -2535,23 +2869,20 @@
     hamburgerBtn.addEventListener('click', () => {
       navOpen = !navOpen;
       mobileNav.classList.toggle('open', navOpen);
+      hamburgerBtn.classList.toggle('active', navOpen);
       document.body.style.overflow = navOpen ? 'hidden' : '';
-      const spans = hamburgerBtn.querySelectorAll('span');
-      if (navOpen) {
-        spans[0].style.transform = 'translateY(7px) rotate(45deg)';
-        spans[1].style.opacity   = '0';
-        spans[2].style.transform = 'translateY(-7px) rotate(-45deg)';
-      } else {
-        spans.forEach(s => { s.style.transform = ''; s.style.opacity = ''; });
-      }
     });
 
     function closeMobileNav() {
       navOpen = false;
       mobileNav.classList.remove('open');
+      hamburgerBtn.classList.remove('active');
       document.body.style.overflow = '';
-      hamburgerBtn.querySelectorAll('span').forEach(s => { s.style.transform = ''; s.style.opacity = ''; });
     }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && navOpen) closeMobileNav();
+    });
 
     const reveals = document.querySelectorAll('.reveal');
     if ('IntersectionObserver' in window) {
@@ -2670,9 +3001,28 @@
         document.body.classList.remove('is-mobile');
       }
     });
+
+    // Back to Top Button
+    const backToTop = document.getElementById('backToTop');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 300) {
+        backToTop.classList.add('visible');
+      } else {
+        backToTop.classList.remove('visible');
+      }
+    });
+
+    backToTop.addEventListener('click', () => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
   </script>
 
-<!-- Sticky CTA Bar for Mobile -->
+<!-- Back to Top Button -->
+  <button id="backToTop" class="back-to-top" aria-label="Back to top">
+    <i class="fa-solid fa-arrow-up"></i>
+  </button>
+
+  <!-- Sticky CTA Bar for Mobile -->
   <div class="sticky-cta">
     <a href="tel:+917797725755" class="cta-btn cta-call">
       <i class="fa-solid fa-phone"></i> Call
